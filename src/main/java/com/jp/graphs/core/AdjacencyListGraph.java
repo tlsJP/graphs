@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO
+ * TODO - type checking stuff
+ *
  * <p>
  * Created by JP on 3/3/2017.
  */
+@SuppressWarnings("unchecked")
 public class AdjacencyListGraph implements Graph {
 
     private Set<Vertex> vertices = new HashSet<>();
@@ -22,12 +24,22 @@ public class AdjacencyListGraph implements Graph {
 
     @Override
     public boolean connect(Vertex i, Vertex j) {
-        return false;
+
+        i.getNeighbors().add(j);
+        j.getNeighbors().add(i);
+
+        return true;
+
     }
 
     @Override
     public boolean disconnect(Vertex i, Vertex j) {
-        return false;
+
+        i.getNeighbors().remove(j);
+        j.getNeighbors().remove(i);
+
+        return true;
+
     }
 
     @Override
@@ -37,7 +49,8 @@ public class AdjacencyListGraph implements Graph {
 
     @Override
     public boolean isAdjacent(Vertex i, Vertex j) {
-        return false;
+        return i.getNeighbors().contains(j) && j.getNeighbors().contains(i);
+
     }
 
     @Override
@@ -46,7 +59,7 @@ public class AdjacencyListGraph implements Graph {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.getClass().getSimpleName() + "[" + vertices + "]";
     }
 }
