@@ -7,5 +7,8 @@ import com.jp.graphs.stereotypes.Vertex;
  */
 public class SimpleVertex extends Vertex<Number> {
 
+    public SimpleVertex(Number n){
+        setDataElement(n);
+    }
 
 }
