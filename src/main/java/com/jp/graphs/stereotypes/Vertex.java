@@ -2,6 +2,7 @@ package com.jp.graphs.stereotypes;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Core implementation of a vertex.
@@ -53,8 +54,8 @@ public abstract class Vertex<T> {
         return dataElement != null ? dataElement.hashCode() : 0;
     }
 
-    public boolean removeNeighbor(Vertex vertex) {
-        return getNeighbors().remove(vertex);
+    public String printNeighbors() {
+        return neighbors.stream().map(Vertex::toString).collect(Collectors.joining(","));
     }
 
     public void setDataElement(T dataElement) {
