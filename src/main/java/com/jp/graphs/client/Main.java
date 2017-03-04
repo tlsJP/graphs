@@ -4,8 +4,8 @@ import com.jp.graphs.core.AdjacencyListGraph;
 import com.jp.graphs.core.SimpleVertex;
 import com.jp.graphs.stereotypes.Graph;
 import com.jp.graphs.stereotypes.Vertex;
-
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runs all the thingies
@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
  */
 public class Main {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
 
         Graph g = new AdjacencyListGraph();
@@ -21,17 +23,27 @@ public class Main {
 
         Vertex a = new SimpleVertex(1);
         Vertex b = new SimpleVertex(2);
+        Vertex c = new SimpleVertex(3);
 
         g.add(a);
         g.add(b);
+        g.add(c);
 
         g.connect(a, b);
-        System.out.println("a~b ? : " + g.isAdjacent(a, b));
+        LOGGER.info("a~b ? {}" , g.isAdjacent(a, b));
+        LOGGER.info("A neighbors : " + a.printNeighbors());
+        LOGGER.info("B neighbors : " + b.printNeighbors());
+        LOGGER.info("C neighbors : " + c.printNeighbors());
+
 
         g.disconnect(a, b);
-        System.out.println("a~b ? : " + g.isAdjacent(a, b));
+        LOGGER.info("a~b ? {}" , g.isAdjacent(a, b));
+        LOGGER.info("A neighbors : " + a.printNeighbors());
+        LOGGER.info("B neighbors : " + b.printNeighbors());
+        LOGGER.info("C neighbors : " + c.printNeighbors());
 
 
-        System.out.println(g.toString());
+
+        LOGGER.info("graph = {}", g);
     }
 }
