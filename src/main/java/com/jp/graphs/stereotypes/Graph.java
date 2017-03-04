@@ -1,5 +1,7 @@
 package com.jp.graphs.stereotypes;
 
+import java.util.Set;
+
 /**
  * Interface for building a graph and possibly answering some questions about the graph itself
  * <p>
@@ -17,5 +19,6 @@ public interface Graph {
 
     boolean remove(Vertex vertex);
 
+    Set<Vertex> getVertices();
 
 }
