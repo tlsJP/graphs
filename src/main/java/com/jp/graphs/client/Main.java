@@ -30,6 +30,8 @@ public class Main {
         g.add(c);
 
         g.connect(a, b);
+        g.connect(c, a);
+        g.connect(c, b);
         LOGGER.info("a~b ? {}" , g.isAdjacent(a, b));
         LOGGER.info("A neighbors : " + a.printNeighbors());
         LOGGER.info("B neighbors : " + b.printNeighbors());
@@ -42,8 +44,12 @@ public class Main {
         LOGGER.info("B neighbors : " + b.printNeighbors());
         LOGGER.info("C neighbors : " + c.printNeighbors());
 
+        g.remove(a);
+        LOGGER.info("B neighbors : " + b.printNeighbors());
+        LOGGER.info("C neighbors : " + c.printNeighbors());
 
 
         LOGGER.info("graph = {}", g);
     }
+
 }
