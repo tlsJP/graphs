@@ -20,10 +20,10 @@ public class VisualMain extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisualMain.class);
 
-    private static final int GRID_HEIGHT = 1;
-    private static final int GRID_WIDTH = 3;
+    private static final int GRID_HEIGHT = 9;
+    private static final int GRID_WIDTH = 21;
 
-    private static final int NODE_DIMENSION = 20;
+    private static final int NODE_DIMENSION = 30;
     private static final int SCENE_HEIGHT = GRID_HEIGHT * NODE_DIMENSION;
     private static final int SCENE_WIDTH = GRID_WIDTH * NODE_DIMENSION;
 
@@ -55,15 +55,6 @@ public class VisualMain extends Application {
             gv.setDataElement(r);
             root.getChildren().add(r);
         });
-
-        LOGGER.info("{}", graph);
-        Vertex someVertex = graph.getVertices().stream().findAny().get();
-
-        LOGGER.info("{}", someVertex);
-        LOGGER.info("{}", someVertex.printNeighbors());
-
-
-
 
         primaryStage.show();
 

@@ -24,8 +24,8 @@ public class GridGraphBuilder {
     public static Graph build(int height, int width) {
         LOGGER.info("build({},{})", new Object[]{height, width});
 
-        final int columns = width ;
-        final int rows = height ;
+        final int columns = width;
+        final int rows = height;
 
         AdjacencyListGraph graph = new AdjacencyListGraph();
 
@@ -34,10 +34,10 @@ public class GridGraphBuilder {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 // Create the vertex
-                LOGGER.info("creating : ({},{})", i, j);
-                Vertex newVertex = new GridVertex(i , j );
+                LOGGER.debug("creating : ({},{})", i, j);
+                Vertex newVertex = new GridVertex(i, j);
                 graph.add(newVertex);
-                LOGGER.info("created : {}", newVertex.printNeighbors());
+                LOGGER.debug("created : {}", newVertex.printNeighbors());
             }
         }
 
@@ -48,11 +48,11 @@ public class GridGraphBuilder {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
 
-                int currentX = i ;
-                int currentY = j ;
+                int currentX = i;
+                int currentY = j;
 
                 // Find the vertex we are wanting to connect
-                LOGGER.info("current : ({},{})", currentX, currentY);
+                LOGGER.debug("current : ({},{})", currentX, currentY);
                 GridVertex currentVertex = (GridVertex) graph.getVertices().stream().filter(v -> {
                     GridVertex gv = (GridVertex) v;
                     return gv.getX() == currentX && gv.getY() == currentY;
@@ -69,10 +69,10 @@ public class GridGraphBuilder {
 
                 }).forEach(gv -> {
                     graph.connect(currentVertex, gv);
-                    LOGGER.info("({},{}) new neighbor : {}",new Object[]{currentVertex.getX(),currentVertex.getY(),gv});
+                    LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
                 });
 
-                LOGGER.info("({},{}) now neighbors : {}" ,new Object[]{currentVertex.getX(),currentVertex.getY(),currentVertex.printNeighbors()});
+                LOGGER.info("({},{}) now neighbors : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), currentVertex.printNeighbors()});
 
             }
         }
