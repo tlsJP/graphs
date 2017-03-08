@@ -53,7 +53,7 @@ public class Main {
         LOGGER.info("graph = {}", g);
 
 
-        Graph g2 = GridGraphBuilder.build(3,4,1);
+        Graph g2 = GridGraphBuilder.build(3,4);
         LOGGER.info("graph = {}", g2);
 
     }

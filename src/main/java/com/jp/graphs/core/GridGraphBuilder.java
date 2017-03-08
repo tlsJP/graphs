@@ -5,8 +5,6 @@ import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 /**
  * This will maybe turn into a proper factory or something later.  For now it's just a place to put graph construction things
  * <p>
@@ -21,14 +19,13 @@ public class GridGraphBuilder {
      *
      * @param height
      * @param width
-     * @param cellSize
      * @return
      */
-    public static Graph build(int height, int width, int cellSize) {
-        LOGGER.info("build({},{},{})", new Object[]{height, width, cellSize});
+    public static Graph build(int height, int width) {
+        LOGGER.info("build({},{})", new Object[]{height, width});
 
-        final int columns = width / cellSize;
-        final int rows = height / cellSize;
+        final int columns = width ;
+        final int rows = height ;
 
         AdjacencyListGraph graph = new AdjacencyListGraph();
 
@@ -37,9 +34,10 @@ public class GridGraphBuilder {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 // Create the vertex
-                LOGGER.debug("creating : ({},{})", i, j);
-                Vertex newVertex = new GridVertex(i * cellSize, j * cellSize);
+                LOGGER.info("creating : ({},{})", i, j);
+                Vertex newVertex = new GridVertex(i , j );
                 graph.add(newVertex);
+                LOGGER.info("created : {}", newVertex.printNeighbors());
             }
         }
 
@@ -50,30 +48,37 @@ public class GridGraphBuilder {
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
 
-                final int currentX = i;
-                final int currentY = j;
+                int currentX = i ;
+                int currentY = j ;
 
                 // Find the vertex we are wanting to connect
-                LOGGER.debug("current : ({},{})", currentX, currentY);
-                final Optional<Vertex> currentVertex = graph.getVertices().stream().filter(v -> {
+                LOGGER.info("current : ({},{})", currentX, currentY);
+                GridVertex currentVertex = (GridVertex) graph.getVertices().stream().filter(v -> {
                     GridVertex gv = (GridVertex) v;
                     return gv.getX() == currentX && gv.getY() == currentY;
-                }).findFirst();
+                }).findFirst().get();
 
                 // Find vertices that are directly left/right/up/down, and for each of those, establish the connections
                 graph.getVertices().stream().filter(v -> {
-                    GridVertex gv = (GridVertex) v;
+                    GridVertex adjacent = (GridVertex) v;
 
-                    boolean isHorizontallyAdjacent = gv.getY() == currentY && (gv.getX() == currentX + cellSize || gv.getX() == currentX - cellSize);
-                    boolean isVerticallyAdjacent = gv.getX() == currentX && (gv.getY() == currentY + cellSize || gv.getY() == currentY - cellSize);
+                    boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
+                    boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
 
                     return isHorizontallyAdjacent || isVerticallyAdjacent;
 
-                }).forEach(gv -> graph.connect(currentVertex.get(), gv));
+                }).forEach(gv -> {
+                    graph.connect(currentVertex, gv);
+                    LOGGER.info("({},{}) new neighbor : {}",new Object[]{currentVertex.getX(),currentVertex.getY(),gv});
+                });
+
+                LOGGER.info("({},{}) now neighbors : {}" ,new Object[]{currentVertex.getX(),currentVertex.getY(),currentVertex.printNeighbors()});
 
             }
         }
 
+        LOGGER.info("Done establishing connections.");
+        LOGGER.info("{}", graph);
 
         return graph;
 

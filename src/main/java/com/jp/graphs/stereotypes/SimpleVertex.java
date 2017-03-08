@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /**
  * Core implementation of a vertex.
  * I haven't decided yet how 'sentient' the vertices should be...
@@ -69,8 +71,10 @@ public abstract class SimpleVertex<T> implements Vertex {
         return dataElement != null ? dataElement.hashCode() : 0;
     }
 
+    @Override
     public String printNeighbors() {
-        return neighbors.stream().map(n -> toString()).collect(Collectors.joining(","));
+
+        return neighbors.stream().map(Object::toString).collect(Collectors.joining(","));
     }
 
     @Override
