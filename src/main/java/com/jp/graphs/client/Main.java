@@ -1,8 +1,9 @@
 package com.jp.graphs.client;
 
 import com.jp.graphs.core.AdjacencyListGraph;
-import com.jp.graphs.core.SimpleVertex;
+import com.jp.graphs.core.GridGraphBuilder;
 import com.jp.graphs.stereotypes.Graph;
+import com.jp.graphs.stereotypes.SimpleVertex;
 import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ public class Main {
         Graph g = new AdjacencyListGraph();
 
 
-        Vertex a = new SimpleVertex(1);
-        Vertex b = new SimpleVertex(2);
-        Vertex c = new SimpleVertex(3);
+        Vertex a = new SimpleVertex(1){};
+        Vertex b = new SimpleVertex(2){};
+        Vertex c = new SimpleVertex(3){};
 
         g.add(a);
         g.add(b);
@@ -50,6 +51,11 @@ public class Main {
 
 
         LOGGER.info("graph = {}", g);
+
+
+        Graph g2 = GridGraphBuilder.build(3,4,1);
+        LOGGER.info("graph = {}", g2);
+
     }
 
 }

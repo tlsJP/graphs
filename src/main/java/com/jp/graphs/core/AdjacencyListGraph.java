@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * TODO - type checking stuff
- *
+ * <p>
  * <p>
  * Created by JP on 3/3/2017.
  */
@@ -25,8 +25,8 @@ public class AdjacencyListGraph implements Graph {
     @Override
     public boolean connect(Vertex i, Vertex j) {
 
-        i.getNeighbors().add(j);
-        j.getNeighbors().add(i);
+        i.connect(j);
+        j.connect(i);
 
         return true;
 
@@ -35,8 +35,8 @@ public class AdjacencyListGraph implements Graph {
     @Override
     public boolean disconnect(Vertex i, Vertex j) {
 
-        i.getNeighbors().remove(j);
-        j.getNeighbors().remove(i);
+        i.disconnect(j);
+        j.disconnect(i);
 
         return true;
 
@@ -59,7 +59,7 @@ public class AdjacencyListGraph implements Graph {
         // First we need to make its neighbors forget about it
         for (Object neighbor : vertex.getNeighbors()) {
             Vertex v = (Vertex) neighbor;
-            v.getNeighbors().remove(vertex);
+            v.disconnect(vertex);
         }
 
         return vertices.remove(vertex);

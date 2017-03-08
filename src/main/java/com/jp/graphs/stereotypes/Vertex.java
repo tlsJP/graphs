@@ -1,71 +1,23 @@
 package com.jp.graphs.stereotypes;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 /**
- * Core implementation of a vertex.
- * I haven't decided yet how 'sentient' the vertices should be...
- * <p>
- * <p>
- * Created by JP on 3/3/2017.
+ * Created by JP on 3/7/2017.
  */
-public abstract class Vertex<T> {
+public interface Vertex {
 
-    private T dataElement;
+    Vertex getParent();
 
-    private Set<Vertex> neighbors;
+    Collection getNeighbors();
 
-    public Vertex() {
-        dataElement = null;
-        neighbors = new HashSet<>();
-    }
+    String printNeighbors();
 
-    public Vertex(T dataElement) {
-        this();
-        this.dataElement = dataElement;
-    }
+    void setDataElement(Object t);
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    Object getDataElement();
 
-        Vertex<?> vertex = (Vertex<?>) o;
+    void connect(Vertex v);
 
-        return dataElement != null ? dataElement.equals(vertex.dataElement) : vertex.dataElement == null;
-    }
-
-    public T getDataElement() {
-        return dataElement;
-    }
-
-    public Set<Vertex> getNeighbors() {
-        if (neighbors == null) {
-            neighbors = new HashSet<>(1);
-        }
-
-        return neighbors;
-    }
-
-    @Override
-    public int hashCode() {
-        return dataElement != null ? dataElement.hashCode() : 0;
-    }
-
-    public String printNeighbors() {
-        return neighbors.stream().map(Vertex::toString).collect(Collectors.joining(","));
-    }
-
-    public void setDataElement(T dataElement) {
-        this.dataElement = dataElement;
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "["
-                + "dataElement:" + dataElement + "]";
-    }
-
+    void disconnect(Vertex v);
 }
