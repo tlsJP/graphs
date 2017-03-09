@@ -2,14 +2,12 @@ package com.jp.graphs.client;
 
 import com.jp.graphs.core.GridGraphFactory;
 import com.jp.graphs.core.GridVertex;
-import com.jp.graphs.search.BreadthFirstSearch;
+import com.jp.graphs.search.DepthFirstSearch;
 import com.jp.graphs.stereotypes.Graph;
 import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.stereotypes.Search;
 import com.jp.graphs.stereotypes.Vertex;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -32,8 +30,8 @@ public class VisualMain extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisualMain.class);
 
-    private static final int GRID_HEIGHT = 9;
-    private static final int GRID_WIDTH = 21;
+    private static final int GRID_HEIGHT = 18;
+    private static final int GRID_WIDTH = 42;
 
     private static final int NODE_DIMENSION = 20;
     private static final int SCENE_HEIGHT = GRID_HEIGHT * NODE_DIMENSION;
@@ -124,12 +122,15 @@ public class VisualMain extends Application {
         /*
         The graph is drawn so let's try to do some path-finding
          */
-        BreadthFirstSearch searchAlgorithm = new BreadthFirstSearch();
+        Search searchAlgorithm = new DepthFirstSearch();
         findPath(searchAlgorithm, graph);
 
         // Let's trace what happened
         Queue<Vertex> trace = new ArrayBlockingQueue(searchAlgorithm.getVisitedNodes().size());
-        searchAlgorithm.getVisitedNodes().forEach(trace::add);
+        searchAlgorithm.getVisitedNodes().forEach(v -> {
+            Vertex vt = (Vertex) v;
+            trace.offer(vt);
+        });
 
 //        Timeline timeline = new Timeline(10);
 //        timeline.setCycleCount(Timeline.INDEFINITE);

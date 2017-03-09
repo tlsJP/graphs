@@ -28,7 +28,7 @@ public class BreadthFirstSearch implements Search {
             return vertex;
         }
 
-        vertex.getNeighbors().stream().filter(n -> !uncheckedNodes.contains(n)).forEach(v -> uncheckedNodes.add((Vertex) v));
+        vertex.getNeighbors().stream().filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n)).forEach(v -> uncheckedNodes.add((Vertex) v));
 
         Vertex next = uncheckedNodes.poll();
         return next == null ? null : doSearch(next, target);
@@ -38,6 +38,7 @@ public class BreadthFirstSearch implements Search {
         return uncheckedNodes;
     }
 
+    @Override
     public Collection<Vertex> getVisitedNodes() {
         return visitedNodes;
     }
