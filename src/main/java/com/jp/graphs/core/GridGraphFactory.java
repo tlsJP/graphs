@@ -10,27 +10,14 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Created by JP on 3/7/2017.
  */
-public class GridGraphBuilder {
+public class GridGraphFactory implements GraphFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridGraphBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridGraphFactory.class);
 
-    /**
-     * Builds a graph of the specified height and width.
-     *
-     * @param height
-     * @param width
-     * @return
-     */
-    public static Graph build(int height, int width) {
-        LOGGER.info("build({},{})", new Object[]{height, width});
-
-        final int columns = width;
-        final int rows = height;
-
+    private static Graph generateGraph(int columns, int rows) {
         AdjacencyListGraph graph = new AdjacencyListGraph();
 
         // This loop is just to create a vertex for every spot in the grid.
-        // The cell size is effectively an offset
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 // Create the vertex
@@ -40,10 +27,13 @@ public class GridGraphBuilder {
                 LOGGER.debug("created : {}", newVertex.printNeighbors());
             }
         }
-
         LOGGER.info("Done creating graph.");
         LOGGER.info("{}", graph);
 
+        return graph;
+    }
+
+    private static void establishNodeConnections(int columns, int rows, Graph graph) {
         // Connect the vertices
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -53,10 +43,10 @@ public class GridGraphBuilder {
 
                 // Find the vertex we are wanting to connect
                 LOGGER.debug("current : ({},{})", currentX, currentY);
-                GridVertex currentVertex = (GridVertex) graph.getVertices().stream().filter(v -> {
+                final GridVertex currentVertex = (GridVertex) graph.getVertices().stream().filter(v -> {
                     GridVertex gv = (GridVertex) v;
                     return gv.getX() == currentX && gv.getY() == currentY;
-                }).findFirst().get();
+                }).findFirst().orElse(null);
 
                 // Find vertices that are directly left/right/up/down, and for each of those, establish the connections
                 graph.getVertices().stream().filter(v -> {
@@ -76,9 +66,23 @@ public class GridGraphBuilder {
 
             }
         }
-
         LOGGER.info("Done establishing connections.");
         LOGGER.info("{}", graph);
+    }
+
+    /**
+     * Builds a graph of the specified height and width.
+     *
+     * @param height
+     * @param width
+     * @return
+     */
+    public Graph build(int height, int width) {
+        LOGGER.info("build({},{})", new Object[]{height, width});
+
+        Graph graph = generateGraph(width, height);
+
+        establishNodeConnections(width, height, graph);
 
         return graph;
 
