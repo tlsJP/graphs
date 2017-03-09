@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 /**
  * Core implementation of a vertex.
  * I haven't decided yet how 'sentient' the vertices should be...
@@ -17,9 +15,10 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
  */
 public abstract class SimpleVertex<T> implements Vertex {
 
+    private Vertex parent;
     private T dataElement;
-
     private Set<Vertex> neighbors;
+    private boolean visited;
 
     public SimpleVertex() {
         dataElement = null;
@@ -63,12 +62,16 @@ public abstract class SimpleVertex<T> implements Vertex {
 
     @Override
     public Vertex getParent() {
-        return null;
+        return parent;
     }
 
     @Override
     public int hashCode() {
         return dataElement != null ? dataElement.hashCode() : 0;
+    }
+
+    public boolean isVisited() {
+        return visited;
     }
 
     @Override
@@ -81,6 +84,14 @@ public abstract class SimpleVertex<T> implements Vertex {
     public void setDataElement(Object o) {
         this.dataElement = (T) o;
 
+    }
+
+    public void setParent(Vertex parent) {
+        this.parent = parent;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
     }
 
     @Override
