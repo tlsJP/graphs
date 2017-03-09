@@ -57,10 +57,7 @@ public class AdjacencyListGraph implements Graph {
     public boolean remove(Vertex vertex) {
 
         // First we need to make its neighbors forget about it
-        for (Object neighbor : vertex.getNeighbors()) {
-            Vertex v = (Vertex) neighbor;
-            v.disconnect(vertex);
-        }
+        vertex.getNeighbors().forEach(v -> ((Vertex) v).disconnect(vertex));
 
         return vertices.remove(vertex);
     }
