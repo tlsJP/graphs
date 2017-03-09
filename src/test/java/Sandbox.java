@@ -1,5 +1,6 @@
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import com.jp.graphs.client.EquatableRectangle;
+import com.jp.graphs.core.GridVertex;
+import com.jp.graphs.stereotypes.Vertex;
 import javafx.scene.shape.Rectangle;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,14 +17,19 @@ public class Sandbox {
     @Test
     public void foo() {
         int size = 3;
-        Paint redColor = Color.rgb(255, 0, 0);
-        Rectangle red = new Rectangle(size, size, redColor);
+        Rectangle red = new EquatableRectangle(size, size, 1,1);
 
-        Rectangle red2 = new Rectangle(size, size, redColor);
-
+        Rectangle red2 = new EquatableRectangle(size, size, 1,1);
 
         System.out.println(red.hashCode());
         System.out.println(red2.hashCode());
         assertEquals(red, red2);
+
+        Vertex v = new GridVertex(0, 0);
+        v.setDataElement(red2);
+
+
+        assertEquals(red, v.getDataElement());
+
     }
 }

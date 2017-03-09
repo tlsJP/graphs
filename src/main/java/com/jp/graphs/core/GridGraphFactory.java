@@ -1,6 +1,7 @@
 package com.jp.graphs.core;
 
 import com.jp.graphs.stereotypes.Graph;
+import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

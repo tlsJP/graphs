@@ -1,7 +1,7 @@
 package com.jp.graphs.client;
 
 import com.jp.graphs.core.AdjacencyListGraph;
-import com.jp.graphs.core.GraphFactory;
+import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.core.GridGraphFactory;
 import com.jp.graphs.stereotypes.Graph;
 import com.jp.graphs.stereotypes.SimpleVertex;

@@ -1,6 +1,4 @@
-package com.jp.graphs.core;
-
-import com.jp.graphs.stereotypes.Graph;
+package com.jp.graphs.stereotypes;
 
 /**
  * Created by JP on 3/8/2017.
