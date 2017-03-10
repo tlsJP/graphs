@@ -2,21 +2,29 @@ package com.jp.graphs.client;
 
 import com.jp.graphs.core.GridGraphFactory;
 import com.jp.graphs.core.GridVertex;
+import com.jp.graphs.search.AStar;
+import com.jp.graphs.search.BreadthFirstSearch;
 import com.jp.graphs.search.DepthFirstSearch;
 import com.jp.graphs.stereotypes.Graph;
 import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.stereotypes.Search;
 import com.jp.graphs.stereotypes.Vertex;
 import javafx.animation.AnimationTimer;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,8 +38,8 @@ public class VisualMain extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisualMain.class);
 
-    private static final int GRID_HEIGHT = 18;
-    private static final int GRID_WIDTH = 42;
+    private static final int GRID_HEIGHT = 36;
+    private static final int GRID_WIDTH = 84;
 
     private static final int NODE_DIMENSION = 20;
     private static final int SCENE_HEIGHT = GRID_HEIGHT * NODE_DIMENSION;
@@ -50,7 +58,7 @@ public class VisualMain extends Application {
      * @param searchAlgorithm
      * @param graph
      */
-    private void findPath(Search searchAlgorithm, Graph graph) {
+    private Vertex findPath(Search searchAlgorithm, Graph graph) {
 
         // Arbitrarily choose a start and end
         int startX;
@@ -87,9 +95,10 @@ public class VisualMain extends Application {
         ((Rectangle) end.getDataElement()).setFill(Color.RED);
 
         // Do the actual search
-        Vertex result = searchAlgorithm.search(start, end.getDataElement());
+        Vertex result = searchAlgorithm.search(start, end);
 
         LOGGER.info("Actual end was : {}", result);
+        return result;
     }
 
     @Override
@@ -111,7 +120,7 @@ public class VisualMain extends Application {
             GridVertex gv = (GridVertex) v;
             Rectangle r = new EquatableRectangle(gv.getX() * NODE_DIMENSION, gv.getY() * NODE_DIMENSION, NODE_DIMENSION, NODE_DIMENSION);
 
-            r.setFill(Color.rgb(100, rand.nextInt(25) + 100, rand.nextInt(25) + 100));
+            r.setFill(Color.rgb(100,  100, rand.nextInt(25) + 100));
             r.setStroke(Color.LIGHTGREY);
             gv.setDataElement(r);
             root.getChildren().add(r);
@@ -122,8 +131,8 @@ public class VisualMain extends Application {
         /*
         The graph is drawn so let's try to do some path-finding
          */
-        Search searchAlgorithm = new DepthFirstSearch();
-        findPath(searchAlgorithm, graph);
+        Search searchAlgorithm = new AStar();
+        Vertex result = findPath(searchAlgorithm, graph);
 
         // Let's trace what happened
         Queue<Vertex> trace = new ArrayBlockingQueue(searchAlgorithm.getVisitedNodes().size());
@@ -132,8 +141,9 @@ public class VisualMain extends Application {
             trace.offer(vt);
         });
 
-//        Timeline timeline = new Timeline(10);
-//        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        Timeline timeline = new Timeline(10);
+        timeline.setCycleCount(1);
 
 
         AnimationTimer timer = new AnimationTimer() {
@@ -149,8 +159,23 @@ public class VisualMain extends Application {
 
             }
         };
-//        timeline.play();
+
+
+        timeline.play();
         timer.start();
+
+        GridVertex r = (GridVertex) result;
+        Vertex prev = result.getParent();
+        List<LineTo> lines = new ArrayList<>();
+        lines.add(new LineTo(r.getX(), r.getY()));
+
+        Path path = new Path();
+        path.getElements().add(new MoveTo(r.getX()*NODE_DIMENSION,r.getY()*NODE_DIMENSION));
+
+        do{
+            path.getElements().add(new LineTo(((GridVertex) prev).getX()*NODE_DIMENSION,((GridVertex) prev).getY()*NODE_DIMENSION));
+        } while((prev = prev.getParent())!=null);
+        root.getChildren().add(path);
 
     }
 
