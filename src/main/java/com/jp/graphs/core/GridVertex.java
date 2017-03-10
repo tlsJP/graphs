@@ -26,6 +26,8 @@ public class GridVertex extends SimpleVertex implements Comparable, Heuristic {
     // Heuristic
     private double hScore;
 
+    private boolean restricted;
+
     public GridVertex(int x, int y) {
         this.x = x;
         this.y = y;
@@ -35,12 +37,13 @@ public class GridVertex extends SimpleVertex implements Comparable, Heuristic {
     public double calculateHeuristic(Vertex v) {
         GridVertex gv = (GridVertex) v;
 
-//        hScore = Math.abs(gv.getX() - x) + Math.abs(gv.getY() - y) ;
-        int xDistance = Math.abs(x - gv.x);
-        int yDistance = Math.abs(y - gv.y);
+        hScore = Math.abs(gv.getX() - x) + Math.abs(gv.getY() - y) ;
 
         // Pythagorean theorem
-        hScore = Math.sqrt(yDistance*yDistance + xDistance*xDistance);
+//        int yDistance = Math.abs(y - gv.y);
+//        int xDistance = Math.abs(x - gv.x);
+//        hScore = Math.sqrt(yDistance * yDistance + xDistance * xDistance);
+
 
 
         return hScore;
@@ -100,6 +103,14 @@ public class GridVertex extends SimpleVertex implements Comparable, Heuristic {
         result = 31 * result + x;
         result = 31 * result + y;
         return result;
+    }
+
+    public boolean isRestricted() {
+        return restricted;
+    }
+
+    public void setRestricted(boolean restricted) {
+        this.restricted = restricted;
     }
 
     public void setX(int x) {

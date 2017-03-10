@@ -6,6 +6,8 @@ import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 /**
  * This will maybe turn into a proper factory or something later.  For now it's just a place to put graph construction things
  * <p>
@@ -35,6 +37,8 @@ public class GridGraphFactory implements GraphFactory {
     }
 
     private static void establishNodeConnections(int columns, int rows, Graph graph) {
+        Random r = new Random();
+
         // Connect the vertices
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -49,6 +53,11 @@ public class GridGraphFactory implements GraphFactory {
                     return gv.getX() == currentX && gv.getY() == currentY;
                 }).findFirst().orElse(null);
 
+                if(r.nextInt(100)<35){
+                    currentVertex.setRestricted(true);
+//                    return;
+                }
+
                 // Find vertices that are directly left/right/up/down, and for each of those, establish the connections
                 graph.getVertices().stream().filter(v -> {
                     GridVertex adjacent = (GridVertex) v;
@@ -56,7 +65,7 @@ public class GridGraphFactory implements GraphFactory {
                     boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
                     boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
 
-                    return isHorizontallyAdjacent || isVerticallyAdjacent;
+                    return (isHorizontallyAdjacent || isVerticallyAdjacent) && !adjacent.isRestricted();
 
                 }).forEach(gv -> {
                     graph.connect(currentVertex, gv);

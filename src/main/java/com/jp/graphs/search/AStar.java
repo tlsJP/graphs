@@ -54,16 +54,18 @@ public class AStar implements Search {
 
             closedList.add(cv);
 
-            cv.getNeighbors().stream().filter(n -> !closedList.contains(n)).forEach(n -> {
+            cv.getNeighbors().stream().filter(n -> !closedList.contains(n)&& !((GridVertex)n).isRestricted() ).forEach(n -> {
                 GridVertex cn = (GridVertex) n;
                 double potentialG = cv.getgScore() + calculateDistance(cv, cn);
 
+                boolean previouslyChecked = openList.contains(cn);
+
                 // If we've seen this node before and the previously found gScore is better, then leave it alone
-                if (openList.contains(cn) && potentialG >= cn.getgScore()) {
+                if (previouslyChecked && potentialG >= cn.getgScore()) {
                     return;
                 }
 
-                if (openList.contains(cn) && potentialG < cn.getgScore()) {
+                if (previouslyChecked && potentialG < cn.getgScore()) {
                     // This path is better; need to update the values
                     cn.setParent(cv);
                     cn.setgScore(potentialG);
@@ -71,14 +73,12 @@ public class AStar implements Search {
                 }
 
                 // We've never seen this node before, so add it to the queue
-                if (!openList.contains(cn)) {
+                if (!previouslyChecked) {
                     cn.setParent(cv);
                     cn.setgScore(potentialG);
                     cn.setfScore(potentialG + cn.calculateHeuristic(goal));
                     openList.offer(cn);
                 }
-
-                // This is the current best path, so we set this node's parent and update its scores
 
             });
 

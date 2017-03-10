@@ -87,12 +87,16 @@ public class VisualMain extends Application {
             return gv.getX() == fStartX && gv.getY() == fStartY;
         }).findFirst().orElse(null);
         ((Rectangle) start.getDataElement()).setFill(Color.GREEN);
+        ((GridVertex) start).setRestricted(false);
 
         Vertex end = graph.getVertices().stream().filter(v -> {
             GridVertex gv = (GridVertex) v;
             return gv.getX() == fEndX && gv.getY() == fEndY;
         }).findFirst().orElse(null);
         ((Rectangle) end.getDataElement()).setFill(Color.RED);
+        ((GridVertex) end).setRestricted(false);
+
+        graph.getVertices().forEach(v->((GridVertex)v).calculateHeuristic(end));
 
         // Do the actual search
         Vertex result = searchAlgorithm.search(start, end);
@@ -118,10 +122,16 @@ public class VisualMain extends Application {
         // right now but it might be useful later?
         graph.getVertices().forEach(v -> {
             GridVertex gv = (GridVertex) v;
+
             Rectangle r = new EquatableRectangle(gv.getX() * NODE_DIMENSION, gv.getY() * NODE_DIMENSION, NODE_DIMENSION, NODE_DIMENSION);
 
             r.setFill(Color.rgb(100,  100, rand.nextInt(25) + 100));
             r.setStroke(Color.LIGHTGREY);
+
+            if (((GridVertex) v).isRestricted()) {
+                r.setFill(Color.BLACK);
+            }
+
             gv.setDataElement(r);
             root.getChildren().add(r);
         });
@@ -142,8 +152,8 @@ public class VisualMain extends Application {
         });
 
 
-        Timeline timeline = new Timeline(10);
-        timeline.setCycleCount(1);
+//        Timeline timeline = new Timeline(10);
+//        timeline.setCycleCount(1);
 
 
         AnimationTimer timer = new AnimationTimer() {
@@ -161,21 +171,24 @@ public class VisualMain extends Application {
         };
 
 
-        timeline.play();
+//        timeline.play();
         timer.start();
 
-        GridVertex r = (GridVertex) result;
-        Vertex prev = result.getParent();
-        List<LineTo> lines = new ArrayList<>();
-        lines.add(new LineTo(r.getX(), r.getY()));
+        if(result!=null){
 
-        Path path = new Path();
-        path.getElements().add(new MoveTo(r.getX()*NODE_DIMENSION,r.getY()*NODE_DIMENSION));
+            GridVertex r = (GridVertex) result;
+            Vertex prev = result.getParent();
+            List<LineTo> lines = new ArrayList<>();
+            lines.add(new LineTo(r.getX(), r.getY()));
 
-        do{
-            path.getElements().add(new LineTo(((GridVertex) prev).getX()*NODE_DIMENSION,((GridVertex) prev).getY()*NODE_DIMENSION));
-        } while((prev = prev.getParent())!=null);
-        root.getChildren().add(path);
+            Path path = new Path();
+            path.getElements().add(new MoveTo(r.getX()*NODE_DIMENSION,r.getY()*NODE_DIMENSION));
+
+            while(prev!=null && (prev = prev.getParent())!=null){
+                path.getElements().add(new LineTo(((GridVertex) prev).getX()*NODE_DIMENSION,((GridVertex) prev).getY()*NODE_DIMENSION));
+            }
+            root.getChildren().add(path);
+        }
 
     }
 
