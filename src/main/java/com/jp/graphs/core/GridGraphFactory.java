@@ -63,12 +63,10 @@ public class GridGraphFactory implements GraphFactory {
                     LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
                 });
 
-                LOGGER.info("({},{}) now neighbors : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), currentVertex.printNeighbors()});
 
             }
         }
         LOGGER.info("Done establishing connections.");
-        LOGGER.info("{}", graph);
     }
 
     /**

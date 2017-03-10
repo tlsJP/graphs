@@ -19,11 +19,10 @@ public class DepthFirstSearch implements Search {
     private Stack<Vertex> uncheckedNodes = new Stack<>();
     private Collection<Vertex> visitedNodes = new ArrayList<>();
 
-    private Vertex doSearch(Vertex root, Object target) {
+    private Vertex doSearch(Vertex root, Vertex target) {
         visitedNodes.add(root);
 
-        Object cv = root.getDataElement();
-        if (cv.equals(target)) {
+        if (root.equals(target)) {
             return root;
         }
 
@@ -43,7 +42,7 @@ public class DepthFirstSearch implements Search {
     }
 
     @Override
-    public Vertex search(Vertex start, Object target) {
+    public Vertex search(Vertex start, Vertex target) {
         uncheckedNodes.clear();
         visitedNodes.clear();
 

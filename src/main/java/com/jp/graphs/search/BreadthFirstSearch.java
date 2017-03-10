@@ -20,11 +20,10 @@ public class BreadthFirstSearch implements Search {
     private Collection<Vertex> visitedNodes = new ArrayList<>();
     private Queue<Vertex> uncheckedNodes = new ArrayBlockingQueue<>(500);
 
-    private Vertex doSearch(Vertex vertex, Object target) {
+    private Vertex doSearch(Vertex vertex, Vertex target) {
         visitedNodes.add(vertex);
 
-        Object currentValue = vertex.getDataElement();
-        if (currentValue.equals(target)) {
+        if (vertex.equals(target)) {
             return vertex;
         }
 
@@ -49,7 +48,7 @@ public class BreadthFirstSearch implements Search {
      * @return
      */
     @Override
-    public Vertex search(Vertex start, Object target) {
+    public Vertex search(Vertex start, Vertex target) {
         uncheckedNodes.clear();
         visitedNodes.clear();
 
