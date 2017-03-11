@@ -31,7 +31,7 @@ public class GridGraphFactory implements GraphFactory {
             }
         }
         LOGGER.info("Done creating graph.");
-        LOGGER.info("{}", graph);
+        LOGGER.debug("{}", graph);
 
         return graph;
     }
@@ -48,15 +48,9 @@ public class GridGraphFactory implements GraphFactory {
 
                 // Find the vertex we are wanting to connect
                 LOGGER.debug("current : ({},{})", currentX, currentY);
-                final GridVertex currentVertex = (GridVertex) graph.getVertices()
-                        .stream()
-                        .filter(v -> {
-                            GridVertex gv = (GridVertex) v;
-                            return gv.getX() == currentX && gv.getY() == currentY;
-                        })
-                        .findFirst()
-                        .orElse(null);
+                final GridVertex currentVertex = (GridVertex) graph.getVertex(new GridVertex(currentX,currentY));
 
+                // Randomly make nodes impassable instead of connecting it to other vertices
                 if (r.nextInt(100) < 20) {
                     currentVertex.setRestricted(true);
                 }
