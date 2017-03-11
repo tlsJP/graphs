@@ -3,8 +3,6 @@ package com.jp.graphs.client;
 import com.jp.graphs.core.GridGraphFactory;
 import com.jp.graphs.core.GridVertex;
 import com.jp.graphs.search.AStar;
-import com.jp.graphs.search.BreadthFirstSearch;
-import com.jp.graphs.search.DepthFirstSearch;
 import com.jp.graphs.stereotypes.Graph;
 import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.stereotypes.Search;
@@ -88,26 +86,30 @@ public class VisualMain extends Application {
             endX = rand.nextInt(GRID_WIDTH);
             endY = rand.nextInt(GRID_HEIGHT);
         } while (startX == endX && startY == endY);
-        final int fStartX = startX;
-        final int fStartY = startY;
-        final int fEndX = endX;
-        final int fEndY = endY;
 
-        GridVertex startVertex = new GridVertex(fStartX, fStartY);
+        GridVertex startVertex = new GridVertex(startX, startY);
         LOGGER.info("Start should be : {}", startVertex);
-        GridVertex endVertex = new GridVertex(fEndX, fEndY);
+        GridVertex endVertex = new GridVertex(endX, endY);
         LOGGER.info("End should be : {}", endVertex);
 
-        Vertex start = graph.getVertices().stream().filter(v -> {
-            GridVertex gv = (GridVertex) v;
-            return gv.getX() == startVertex.getX() && gv.getY() == startVertex.getY();
-        }).findFirst().orElse(null);
+        Vertex start = graph.getVertices()
+                .stream()
+                .filter(v -> {
+                    GridVertex gv = (GridVertex) v;
+                    return gv.getX() == startVertex.getX() && gv.getY() == startVertex.getY();
+                })
+                .findFirst()
+                .orElse(null);
         ((GridVertex) start).setRestricted(false);
 
-        Vertex end = graph.getVertices().stream().filter(v -> {
-            GridVertex gv = (GridVertex) v;
-            return gv.getX() == endVertex.getX() && gv.getY() == endVertex.getY();
-        }).findFirst().orElse(null);
+        Vertex end = graph.getVertices()
+                .stream()
+                .filter(v -> {
+                    GridVertex gv = (GridVertex) v;
+                    return gv.getX() == endVertex.getX() && gv.getY() == endVertex.getY();
+                })
+                .findFirst()
+                .orElse(null);
         ((GridVertex) end).setRestricted(false);
 
         // Do the actual search
@@ -135,14 +137,16 @@ public class VisualMain extends Application {
                 }
 
 
-                if(searchAlgorithm instanceof AStar){
+                if (searchAlgorithm instanceof AStar) {
                     // Force all visited nodes to be a distinct color
-                    searchAlgorithm.getVisitedNodes().stream().forEach(n -> {
-                        Rectangle r = (Rectangle) ((GridVertex) n).getDataElement();
-                        r.setFill(Color.DARKCYAN);
-                    });
+                    searchAlgorithm.getVisitedNodes()
+                            .stream().
+                            forEach(n -> {
+                                Rectangle r = (Rectangle) ((GridVertex) n).getDataElement();
+                                r.setFill(Color.DARKCYAN);
+                            });
                 } else {
-                    ((Rectangle)currentSpot.getDataElement()).setFill(Color.DARKCYAN);
+                    ((Rectangle) currentSpot.getDataElement()).setFill(Color.DARKCYAN);
                 }
 
                 ((Rectangle) result.getDataElement()).setFill(Color.RED);

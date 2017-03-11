@@ -48,14 +48,17 @@ public class GridGraphFactory implements GraphFactory {
 
                 // Find the vertex we are wanting to connect
                 LOGGER.debug("current : ({},{})", currentX, currentY);
-                final GridVertex currentVertex = (GridVertex) graph.getVertices().stream().filter(v -> {
-                    GridVertex gv = (GridVertex) v;
-                    return gv.getX() == currentX && gv.getY() == currentY;
-                }).findFirst().orElse(null);
+                final GridVertex currentVertex = (GridVertex) graph.getVertices()
+                        .stream()
+                        .filter(v -> {
+                            GridVertex gv = (GridVertex) v;
+                            return gv.getX() == currentX && gv.getY() == currentY;
+                        })
+                        .findFirst()
+                        .orElse(null);
 
-                if(r.nextInt(100)<20){
+                if (r.nextInt(100) < 20) {
                     currentVertex.setRestricted(true);
-//                    return;
                 }
 
                 // Find vertices that are directly left/right/up/down, and for each of those, establish the connections

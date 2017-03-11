@@ -27,7 +27,9 @@ public class DepthFirstSearch implements Search {
             return root;
         }
 
-        root.getNeighbors().stream().filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n) && !((GridVertex)n).isRestricted()).forEach(v -> uncheckedNodes.push((Vertex) v));
+        root.getNeighbors().stream()
+                .filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n) && !((GridVertex) n).isRestricted())
+                .forEach(v -> uncheckedNodes.push((Vertex) v));
 
         Vertex next = null;
         if (!uncheckedNodes.isEmpty()) {

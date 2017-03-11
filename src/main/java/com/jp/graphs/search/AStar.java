@@ -53,33 +53,35 @@ public class AStar implements Search {
                 return cv;
             }
 
-            cv.getNeighbors().stream().filter(n -> !closedList.contains(n)&& !((GridVertex)n).isRestricted() ).forEach(n -> {
-                GridVertex cn = (GridVertex) n;
-                double potentialG = cv.getgScore() + calculateDistance(cv, cn);
+            cv.getNeighbors().stream()
+                    .filter(n -> !closedList.contains(n) && !((GridVertex) n).isRestricted())
+                    .forEach(n -> {
+                        GridVertex cn = (GridVertex) n;
+                        double potentialG = cv.getgScore() + calculateDistance(cv, cn);
 
-                boolean previouslyChecked = openList.contains(cn);
+                        boolean previouslyChecked = openList.contains(cn);
 
-                // If we've seen this node before and the previously found gScore is better, then leave it alone
-                if (previouslyChecked && potentialG >= cn.getgScore()) {
-                    return;
-                }
+                        // If we've seen this node before and the previously found gScore is better, then leave it alone
+                        if (previouslyChecked && potentialG >= cn.getgScore()) {
+                            return;
+                        }
 
-                if (previouslyChecked && potentialG < cn.getgScore()) {
-                    // This path is better; need to update the values
-                    cn.setParent(cv);
-                    cn.setgScore(potentialG);
-                    cn.setfScore(potentialG + cn.calculateHeuristic(goal));
-                }
+                        if (previouslyChecked && potentialG < cn.getgScore()) {
+                            // This path is better; need to update the values
+                            cn.setParent(cv);
+                            cn.setgScore(potentialG);
+                            cn.setfScore(potentialG + cn.calculateHeuristic(goal));
+                        }
 
-                // We've never seen this node before, so add it to the queue
-                if (!previouslyChecked) {
-                    cn.setParent(cv);
-                    cn.setgScore(potentialG);
-                    cn.setfScore(potentialG + cn.calculateHeuristic(goal));
-                    openList.offer(cn);
-                }
+                        // We've never seen this node before, so add it to the queue
+                        if (!previouslyChecked) {
+                            cn.setParent(cv);
+                            cn.setgScore(potentialG);
+                            cn.setfScore(potentialG + cn.calculateHeuristic(goal));
+                            openList.offer(cn);
+                        }
 
-            });
+                    });
 
 
         }
