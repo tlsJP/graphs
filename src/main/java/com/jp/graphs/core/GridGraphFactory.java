@@ -18,7 +18,7 @@ public class GridGraphFactory implements GraphFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridGraphFactory.class);
 
     private static Graph generateGraph(int columns, int rows) {
-        AdjacencyListGraph graph = new AdjacencyListGraph();
+        Graph graph = new HashTableAdjacencyListGraph();
 
         // This loop is just to create a vertex for every spot in the grid.
         for (int i = 0; i < columns; i++) {
