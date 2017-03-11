@@ -6,6 +6,7 @@ import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -20,7 +21,7 @@ public class AStar implements Search {
     private static final Logger LOGGER = LoggerFactory.getLogger(AStar.class);
 
     private Queue<Vertex> openList = new PriorityBlockingQueue<>();
-    private Queue<Vertex> closedList = new PriorityBlockingQueue<>();
+    private Collection<Vertex> closedList = new ArrayList<>();
 
     private static double calculateDistance(Vertex a, Vertex b) {
         // This exists because the wiki had a function, but we know that our grid distance is always 1
@@ -45,14 +46,12 @@ public class AStar implements Search {
         while (!openList.isEmpty()) {
 
             GridVertex cv = (GridVertex) openList.poll();
+            closedList.add(cv);
 
             if (cv.equals(goal)) {
                 LOGGER.info("Found the end.");
                 return cv;
             }
-
-
-            closedList.add(cv);
 
             cv.getNeighbors().stream().filter(n -> !closedList.contains(n)&& !((GridVertex)n).isRestricted() ).forEach(n -> {
                 GridVertex cn = (GridVertex) n;

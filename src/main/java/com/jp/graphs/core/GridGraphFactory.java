@@ -53,7 +53,7 @@ public class GridGraphFactory implements GraphFactory {
                     return gv.getX() == currentX && gv.getY() == currentY;
                 }).findFirst().orElse(null);
 
-                if(r.nextInt(100)<35){
+                if(r.nextInt(100)<20){
                     currentVertex.setRestricted(true);
 //                    return;
                 }
