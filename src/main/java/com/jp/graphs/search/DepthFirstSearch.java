@@ -1,5 +1,6 @@
 package com.jp.graphs.search;
 
+import com.jp.graphs.core.GridVertex;
 import com.jp.graphs.stereotypes.Search;
 import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
@@ -26,7 +27,9 @@ public class DepthFirstSearch implements Search {
             return root;
         }
 
-        root.getNeighbors().stream().filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n)).forEach(v -> uncheckedNodes.push((Vertex) v));
+        root.getNeighbors().stream()
+                .filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n) && !((GridVertex) n).isRestricted())
+                .forEach(v -> uncheckedNodes.push((Vertex) v));
 
         Vertex next = null;
         if (!uncheckedNodes.isEmpty()) {

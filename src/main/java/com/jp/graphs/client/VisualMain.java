@@ -3,14 +3,11 @@ package com.jp.graphs.client;
 import com.jp.graphs.core.GridGraphFactory;
 import com.jp.graphs.core.GridVertex;
 import com.jp.graphs.search.AStar;
-import com.jp.graphs.search.BreadthFirstSearch;
-import com.jp.graphs.search.DepthFirstSearch;
 import com.jp.graphs.stereotypes.Graph;
 import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.stereotypes.Search;
 import com.jp.graphs.stereotypes.Vertex;
 import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -46,10 +43,28 @@ public class VisualMain extends Application {
     private static final int SCENE_WIDTH = GRID_WIDTH * NODE_DIMENSION;
 
     private static Random rand = new Random();
-
+    private Group root = new Group();
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void drawFinalPath(Vertex result) {
+        if (result != null) {
+
+            GridVertex r = (GridVertex) result;
+            Vertex prev = result.getParent();
+            List<LineTo> lines = new ArrayList<>();
+            lines.add(new LineTo(r.getX(), r.getY()));
+
+            Path path = new Path();
+            path.getElements().add(new MoveTo(r.getX() * NODE_DIMENSION, r.getY() * NODE_DIMENSION));
+
+            while (prev != null && (prev = prev.getParent()) != null) {
+                path.getElements().add(new LineTo(((GridVertex) prev).getX() * NODE_DIMENSION, ((GridVertex) prev).getY() * NODE_DIMENSION));
+            }
+            root.getChildren().add(path);
+        }
     }
 
     /**
@@ -71,28 +86,31 @@ public class VisualMain extends Application {
             endX = rand.nextInt(GRID_WIDTH);
             endY = rand.nextInt(GRID_HEIGHT);
         } while (startX == endX && startY == endY);
-        final int fStartX = startX;
-        final int fStartY = startY;
-        final int fEndX = endX;
-        final int fEndY = endY;
 
-        Vertex startVertex = new GridVertex(fStartX, fStartY);
+        GridVertex startVertex = new GridVertex(startX, startY);
         LOGGER.info("Start should be : {}", startVertex);
-        Vertex endVertex = new GridVertex(fEndX, fEndY);
+        GridVertex endVertex = new GridVertex(endX, endY);
         LOGGER.info("End should be : {}", endVertex);
 
-        // Coordinates selected, so let's pull the two vertices from the graph so we can pass them to the search algorithm
-        Vertex start = graph.getVertices().stream().filter(v -> {
-            GridVertex gv = (GridVertex) v;
-            return gv.getX() == fStartX && gv.getY() == fStartY;
-        }).findFirst().orElse(null);
-        ((Rectangle) start.getDataElement()).setFill(Color.GREEN);
+        Vertex start = graph.getVertices()
+                .stream()
+                .filter(v -> {
+                    GridVertex gv = (GridVertex) v;
+                    return gv.getX() == startVertex.getX() && gv.getY() == startVertex.getY();
+                })
+                .findFirst()
+                .orElse(null);
+        ((GridVertex) start).setRestricted(false);
 
-        Vertex end = graph.getVertices().stream().filter(v -> {
-            GridVertex gv = (GridVertex) v;
-            return gv.getX() == fEndX && gv.getY() == fEndY;
-        }).findFirst().orElse(null);
-        ((Rectangle) end.getDataElement()).setFill(Color.RED);
+        Vertex end = graph.getVertices()
+                .stream()
+                .filter(v -> {
+                    GridVertex gv = (GridVertex) v;
+                    return gv.getX() == endVertex.getX() && gv.getY() == endVertex.getY();
+                })
+                .findFirst()
+                .orElse(null);
+        ((GridVertex) end).setRestricted(false);
 
         // Do the actual search
         Vertex result = searchAlgorithm.search(start, end);
@@ -101,11 +119,54 @@ public class VisualMain extends Application {
         return result;
     }
 
+    private void playback(final Search searchAlgorithm, Vertex result) {
+        Queue<Vertex> trace = new ArrayBlockingQueue(searchAlgorithm.getVisitedNodes().size());
+        searchAlgorithm.getVisitedNodes().forEach(v -> {
+            Vertex vt = (Vertex) v;
+            trace.offer(vt);
+        });
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+
+                Vertex currentSpot = trace.poll();
+                if (currentSpot == null) {
+                    stop();
+                    return;
+                }
+
+
+                if (searchAlgorithm instanceof AStar) {
+                    // Force all visited nodes to be a distinct color
+                    searchAlgorithm.getVisitedNodes()
+                            .stream().
+                            forEach(n -> {
+                                Rectangle r = (Rectangle) ((GridVertex) n).getDataElement();
+                                r.setFill(Color.DARKCYAN);
+                            });
+                } else {
+                    ((Rectangle) currentSpot.getDataElement()).setFill(Color.DARKCYAN);
+                }
+
+                ((Rectangle) result.getDataElement()).setFill(Color.RED);
+
+                GridVertex parent = (GridVertex) currentSpot.getParent();
+
+                while (parent != null) {
+                    ((Rectangle) parent.getDataElement()).setFill(Color.LIGHTBLUE);
+                    parent = (GridVertex) parent.getParent();
+                }
+
+            }
+        };
+
+        timer.start();
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        // Create the window
-        Group root = new Group();
         Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT, Color.WHITE);
         primaryStage.setScene(scene);
         primaryStage.setTitle(this.getClass().getSimpleName());
@@ -114,14 +175,19 @@ public class VisualMain extends Application {
         GraphFactory builder = new GridGraphFactory();
         final Graph graph = builder.build(GRID_HEIGHT, GRID_WIDTH);
 
-        // Draw a rectangle for each vertex.  Also setting the data element of the vertex to the rectangle.  Not sure why
-        // right now but it might be useful later?
+        // Draw a rectangle for each vertex.  Also setting the data element of the vertex to the rectangle.
         graph.getVertices().forEach(v -> {
             GridVertex gv = (GridVertex) v;
+
             Rectangle r = new EquatableRectangle(gv.getX() * NODE_DIMENSION, gv.getY() * NODE_DIMENSION, NODE_DIMENSION, NODE_DIMENSION);
 
-            r.setFill(Color.rgb(100,  100, rand.nextInt(25) + 100));
+            r.setFill(Color.rgb(100, 100, rand.nextInt(25) + 100));
             r.setStroke(Color.LIGHTGREY);
+
+            if (((GridVertex) v).isRestricted()) {
+                r.setFill(Color.BLACK);
+            }
+
             gv.setDataElement(r);
             root.getChildren().add(r);
         });
@@ -135,47 +201,9 @@ public class VisualMain extends Application {
         Vertex result = findPath(searchAlgorithm, graph);
 
         // Let's trace what happened
-        Queue<Vertex> trace = new ArrayBlockingQueue(searchAlgorithm.getVisitedNodes().size());
-        searchAlgorithm.getVisitedNodes().forEach(v -> {
-            Vertex vt = (Vertex) v;
-            trace.offer(vt);
-        });
+        playback(searchAlgorithm, result);
 
-
-        Timeline timeline = new Timeline(10);
-        timeline.setCycleCount(1);
-
-
-        AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                Vertex currentSpot = trace.poll();
-                if (currentSpot == null) {
-                    stop();
-                } else {
-                    ((Rectangle) currentSpot.getDataElement()).setFill(Color.DARKGREY);
-                }
-
-
-            }
-        };
-
-
-        timeline.play();
-        timer.start();
-
-        GridVertex r = (GridVertex) result;
-        Vertex prev = result.getParent();
-        List<LineTo> lines = new ArrayList<>();
-        lines.add(new LineTo(r.getX(), r.getY()));
-
-        Path path = new Path();
-        path.getElements().add(new MoveTo(r.getX()*NODE_DIMENSION,r.getY()*NODE_DIMENSION));
-
-        do{
-            path.getElements().add(new LineTo(((GridVertex) prev).getX()*NODE_DIMENSION,((GridVertex) prev).getY()*NODE_DIMENSION));
-        } while((prev = prev.getParent())!=null);
-        root.getChildren().add(path);
+        drawFinalPath(result);
 
     }
 
