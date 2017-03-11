@@ -1,5 +1,6 @@
 package com.jp.graphs.search;
 
+import com.jp.graphs.core.GridVertex;
 import com.jp.graphs.stereotypes.Search;
 import com.jp.graphs.stereotypes.Vertex;
 import org.slf4j.Logger;
@@ -20,15 +21,16 @@ public class BreadthFirstSearch implements Search {
     private Collection<Vertex> visitedNodes = new ArrayList<>();
     private Queue<Vertex> uncheckedNodes = new ArrayBlockingQueue<>(500);
 
-    private Vertex doSearch(Vertex vertex, Object target) {
+    private Vertex doSearch(Vertex vertex, Vertex target) {
         visitedNodes.add(vertex);
 
-        Object currentValue = vertex.getDataElement();
-        if (currentValue.equals(target)) {
+        if (vertex.equals(target)) {
             return vertex;
         }
 
-        vertex.getNeighbors().stream().filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n)).forEach(v -> uncheckedNodes.add((Vertex) v));
+        vertex.getNeighbors().stream()
+                .filter(n -> !uncheckedNodes.contains(n) && !visitedNodes.contains(n) && !((GridVertex) n).isRestricted())
+                .forEach(v -> uncheckedNodes.add((Vertex) v));
 
         Vertex next = uncheckedNodes.poll();
         return next == null ? null : doSearch(next, target);
@@ -49,7 +51,7 @@ public class BreadthFirstSearch implements Search {
      * @return
      */
     @Override
-    public Vertex search(Vertex start, Object target) {
+    public Vertex search(Vertex start, Vertex target) {
         uncheckedNodes.clear();
         visitedNodes.clear();
 
