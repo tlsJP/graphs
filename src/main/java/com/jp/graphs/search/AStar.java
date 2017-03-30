@@ -25,7 +25,12 @@ public class AStar implements Search {
 
     private static double calculateDistance(Vertex a, Vertex b) {
         // This exists because the wiki had a function, but we know that our grid distance is always 1
-        return 1;
+        return 1.0D;
+    }
+
+    @Override
+    public Collection getUncheckedNodes() {
+        return openList;
     }
 
     @Override
