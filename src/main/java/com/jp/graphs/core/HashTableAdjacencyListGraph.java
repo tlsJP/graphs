@@ -75,7 +75,7 @@ public class HashTableAdjacencyListGraph extends AdjacencyListGraph implements G
         super.remove(vertex);
 
         vertices.remove(vertex);
-        vertices.entrySet().forEach(es -> es.getValue().remove(vertex));
+        vertices.forEach((key, value) -> value.remove(vertex));
         return true;
     }
 
