@@ -36,6 +36,7 @@ public class BreadthFirstSearch implements Search {
         return next == null ? null : doSearch(next, target);
     }
 
+    @Override
     public Queue<Vertex> getUncheckedNodes() {
         return uncheckedNodes;
     }

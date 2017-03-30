@@ -35,10 +35,10 @@ public class VisualMain extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisualMain.class);
 
-    private static final int GRID_HEIGHT = 36;
-    private static final int GRID_WIDTH = 84;
+    private static final int GRID_HEIGHT = 9 * 3;
+    private static final int GRID_WIDTH = 21 * 3;
 
-    private static final int NODE_DIMENSION = 20;
+    private static final int NODE_DIMENSION = 15;
     private static final int SCENE_HEIGHT = GRID_HEIGHT * NODE_DIMENSION;
     private static final int SCENE_WIDTH = GRID_WIDTH * NODE_DIMENSION;
 
@@ -58,6 +58,7 @@ public class VisualMain extends Application {
             lines.add(new LineTo(r.getX(), r.getY()));
 
             Path path = new Path();
+            path.setStroke(Color.WHITE);
             path.getElements().add(new MoveTo(r.getX() * NODE_DIMENSION, r.getY() * NODE_DIMENSION));
 
             while (prev != null && (prev = prev.getParent()) != null) {
@@ -87,29 +88,16 @@ public class VisualMain extends Application {
             endY = rand.nextInt(GRID_HEIGHT);
         } while (startX == endX && startY == endY);
 
-        GridVertex startVertex = new GridVertex(startX, startY);
+        // Set start
+        GridVertex startVertex = new GridVertex(1, 1);
         LOGGER.info("Start should be : {}", startVertex);
-        GridVertex endVertex = new GridVertex(endX, endY);
-        LOGGER.info("End should be : {}", endVertex);
-
-        Vertex start = graph.getVertices()
-                .stream()
-                .filter(v -> {
-                    GridVertex gv = (GridVertex) v;
-                    return gv.getX() == startVertex.getX() && gv.getY() == startVertex.getY();
-                })
-                .findFirst()
-                .orElse(null);
+        Vertex start = graph.getVertex(startVertex);
         ((GridVertex) start).setRestricted(false);
 
-        Vertex end = graph.getVertices()
-                .stream()
-                .filter(v -> {
-                    GridVertex gv = (GridVertex) v;
-                    return gv.getX() == endVertex.getX() && gv.getY() == endVertex.getY();
-                })
-                .findFirst()
-                .orElse(null);
+        // Set end
+        GridVertex endVertex = new GridVertex(1, GRID_HEIGHT - 1);
+        LOGGER.info("End should be : {}", endVertex);
+        Vertex end = graph.getVertex(endVertex);
         ((GridVertex) end).setRestricted(false);
 
         // Do the actual search
@@ -136,12 +124,11 @@ public class VisualMain extends Application {
                     return;
                 }
 
-
                 if (searchAlgorithm instanceof AStar) {
                     // Force all visited nodes to be a distinct color
                     searchAlgorithm.getVisitedNodes()
-                            .stream().
-                            forEach(n -> {
+                            .stream()
+                            .forEach(n -> {
                                 Rectangle r = (Rectangle) ((GridVertex) n).getDataElement();
                                 r.setFill(Color.DARKCYAN);
                             });
@@ -175,6 +162,14 @@ public class VisualMain extends Application {
         GraphFactory builder = new GridGraphFactory();
         final Graph graph = builder.build(GRID_HEIGHT, GRID_WIDTH);
 
+        // Make a wall down the middle of the grid that goes mostly all the way across
+        graph.getVertices().stream()
+                .filter(v -> {
+                    GridVertex gv = (GridVertex) v;
+                    return gv.getY() == Math.floor(GRID_HEIGHT / 2) && gv.getX() < GRID_WIDTH * .75;
+                })
+                .forEach(v -> ((GridVertex) v).setRestricted(true));
+
         // Draw a rectangle for each vertex.  Also setting the data element of the vertex to the rectangle.
         graph.getVertices().forEach(v -> {
             GridVertex gv = (GridVertex) v;
@@ -182,7 +177,7 @@ public class VisualMain extends Application {
             Rectangle r = new EquatableRectangle(gv.getX() * NODE_DIMENSION, gv.getY() * NODE_DIMENSION, NODE_DIMENSION, NODE_DIMENSION);
 
             r.setFill(Color.rgb(100, 100, rand.nextInt(25) + 100));
-            r.setStroke(Color.LIGHTGREY);
+            r.setStroke(Color.rgb(50, 50, 50));
 
             if (((GridVertex) v).isRestricted()) {
                 r.setFill(Color.BLACK);
@@ -193,6 +188,7 @@ public class VisualMain extends Application {
         });
 
         primaryStage.show();
+
 
         /*
         The graph is drawn so let's try to do some path-finding

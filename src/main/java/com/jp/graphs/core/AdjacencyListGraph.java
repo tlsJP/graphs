@@ -48,6 +48,14 @@ public class AdjacencyListGraph implements Graph {
     }
 
     @Override
+    public Vertex getVertex(Vertex v) {
+        return vertices.stream()
+                .filter(vt -> vt.equals(v))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public boolean isAdjacent(Vertex i, Vertex j) {
         return i.getNeighbors().contains(j) && j.getNeighbors().contains(i);
 

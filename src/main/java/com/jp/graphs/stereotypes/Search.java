@@ -10,4 +10,6 @@ public interface Search {
     Vertex search(Vertex start, Vertex target);
 
     Collection getVisitedNodes();
+
+    Collection getUncheckedNodes();
 }
