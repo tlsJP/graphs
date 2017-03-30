@@ -24,8 +24,15 @@ public class AStar implements Search {
     private Collection<Vertex> closedList = new ArrayList<>();
 
     private static double calculateDistance(Vertex a, Vertex b) {
-        // This exists because the wiki had a function, but we know that our grid distance is always 1
-        return 1.0D;
+
+        GridVertex vA = (GridVertex) a;
+        GridVertex vB = (GridVertex)b;
+
+        int yDistance = Math.abs(vA.getY() - vB.getY());
+        int xDistance = Math.abs(vA.getX()- vB.getX());
+        return Math.sqrt(yDistance * yDistance + xDistance * xDistance);
+
+//        return 1;
     }
 
     @Override
