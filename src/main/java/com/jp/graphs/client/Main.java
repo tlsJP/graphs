@@ -1,6 +1,7 @@
 package com.jp.graphs.client;
 
 import com.jp.graphs.core.AdjacencyListGraph;
+import com.jp.graphs.core.HashTableAdjacencyListGraph;
 import com.jp.graphs.stereotypes.GraphFactory;
 import com.jp.graphs.core.GridGraphFactory;
 import com.jp.graphs.stereotypes.Graph;
@@ -20,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Graph g = new AdjacencyListGraph();
+        Graph g = new HashTableAdjacencyListGraph();
 
 
         Vertex a = new SimpleVertex(1){};

@@ -21,4 +21,6 @@ public interface Graph {
 
     Set<Vertex> getVertices();
 
+    Vertex getVertex(Vertex v);
+
 }

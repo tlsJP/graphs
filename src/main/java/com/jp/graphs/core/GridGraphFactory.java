@@ -18,7 +18,7 @@ public class GridGraphFactory implements GraphFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridGraphFactory.class);
 
     private static Graph generateGraph(int columns, int rows) {
-        AdjacencyListGraph graph = new AdjacencyListGraph();
+        Graph graph = new HashTableAdjacencyListGraph();
 
         // This loop is just to create a vertex for every spot in the grid.
         for (int i = 0; i < columns; i++) {
@@ -31,7 +31,7 @@ public class GridGraphFactory implements GraphFactory {
             }
         }
         LOGGER.info("Done creating graph.");
-        LOGGER.info("{}", graph);
+        LOGGER.debug("{}", graph);
 
         return graph;
     }
@@ -48,33 +48,27 @@ public class GridGraphFactory implements GraphFactory {
 
                 // Find the vertex we are wanting to connect
                 LOGGER.debug("current : ({},{})", currentX, currentY);
-                final GridVertex currentVertex = (GridVertex) graph.getVertices()
-                        .stream()
-                        .filter(v -> {
-                            GridVertex gv = (GridVertex) v;
-                            return gv.getX() == currentX && gv.getY() == currentY;
-                        })
-                        .findFirst()
-                        .orElse(null);
+                final GridVertex currentVertex = (GridVertex) graph.getVertex(new GridVertex(currentX, currentY));
 
+                // Randomly make nodes impassable instead of connecting it to other vertices
                 if (r.nextInt(100) < 20) {
                     currentVertex.setRestricted(true);
                 }
 
                 // Find vertices that are directly left/right/up/down, and for each of those, establish the connections
-                graph.getVertices().stream().filter(v -> {
-                    GridVertex adjacent = (GridVertex) v;
+                graph.getVertices().stream()
+                        .filter(v -> {
+                            GridVertex adjacent = (GridVertex) v;
 
-                    boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
-                    boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
+                            boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
+                            boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
 
-                    return (isHorizontallyAdjacent || isVerticallyAdjacent) && !adjacent.isRestricted();
-
-                }).forEach(gv -> {
-                    graph.connect(currentVertex, gv);
-                    LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
-                });
-
+                            return (isHorizontallyAdjacent || isVerticallyAdjacent) && !adjacent.isRestricted();
+                        })
+                        .forEach(gv -> {
+                            graph.connect(currentVertex, gv);
+                            LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
+                        });
 
             }
         }

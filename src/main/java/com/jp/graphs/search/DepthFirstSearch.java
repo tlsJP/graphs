@@ -45,6 +45,11 @@ public class DepthFirstSearch implements Search {
     }
 
     @Override
+    public Collection getUncheckedNodes() {
+        return uncheckedNodes;
+    }
+
+    @Override
     public Vertex search(Vertex start, Vertex target) {
         uncheckedNodes.clear();
         visitedNodes.clear();
