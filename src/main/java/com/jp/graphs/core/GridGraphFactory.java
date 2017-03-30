@@ -60,14 +60,19 @@ public class GridGraphFactory implements GraphFactory {
                         .filter(v -> {
                             GridVertex adjacent = (GridVertex) v;
 
-                            boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
-                            boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
+                            boolean isOneHorizontalUnitAway = Math.abs(adjacent.getX() - currentX) == 1;
+                            boolean isOneVerticalUnitAway = Math.abs(adjacent.getY() - currentY) == 1;
 
-                            return (isHorizontallyAdjacent || isVerticallyAdjacent) && !adjacent.isRestricted();
+                            boolean isHorizontallyAdjacent = adjacent.getY() == currentY && isOneHorizontalUnitAway;
+                            boolean isVerticallyAdjacent = adjacent.getX() == currentX && isOneVerticalUnitAway;
+                            boolean isDiagonallyAdjacent = isOneHorizontalUnitAway && isOneVerticalUnitAway;
+
+                            return (isHorizontallyAdjacent || isVerticallyAdjacent || isDiagonallyAdjacent) && !adjacent.isRestricted();
+
                         })
-                        .forEach(gv -> {
-                            graph.connect(currentVertex, gv);
-                            LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
+                        .forEach(newNeighbor -> {
+                            graph.connect(currentVertex, newNeighbor);
+                            LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), newNeighbor});
                         });
 
             }
