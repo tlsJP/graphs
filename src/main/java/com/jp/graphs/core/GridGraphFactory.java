@@ -48,7 +48,7 @@ public class GridGraphFactory implements GraphFactory {
 
                 // Find the vertex we are wanting to connect
                 LOGGER.debug("current : ({},{})", currentX, currentY);
-                final GridVertex currentVertex = (GridVertex) graph.getVertex(new GridVertex(currentX,currentY));
+                final GridVertex currentVertex = (GridVertex) graph.getVertex(new GridVertex(currentX, currentY));
 
                 // Randomly make nodes impassable instead of connecting it to other vertices
                 if (r.nextInt(100) < 20) {
@@ -56,19 +56,19 @@ public class GridGraphFactory implements GraphFactory {
                 }
 
                 // Find vertices that are directly left/right/up/down, and for each of those, establish the connections
-                graph.getVertices().stream().filter(v -> {
-                    GridVertex adjacent = (GridVertex) v;
+                graph.getVertices().stream()
+                        .filter(v -> {
+                            GridVertex adjacent = (GridVertex) v;
 
-                    boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
-                    boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
+                            boolean isHorizontallyAdjacent = adjacent.getY() == currentVertex.getY() && (adjacent.getX() == currentX + 1 || adjacent.getX() == currentX - 1);
+                            boolean isVerticallyAdjacent = adjacent.getX() == currentVertex.getX() && (adjacent.getY() == currentY + 1 || adjacent.getY() == currentY - 1);
 
-                    return (isHorizontallyAdjacent || isVerticallyAdjacent) && !adjacent.isRestricted();
-
-                }).forEach(gv -> {
-                    graph.connect(currentVertex, gv);
-                    LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
-                });
-
+                            return (isHorizontallyAdjacent || isVerticallyAdjacent) && !adjacent.isRestricted();
+                        })
+                        .forEach(gv -> {
+                            graph.connect(currentVertex, gv);
+                            LOGGER.debug("({},{}) new neighbor : {}", new Object[]{currentVertex.getX(), currentVertex.getY(), gv});
+                        });
 
             }
         }

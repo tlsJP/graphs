@@ -35,10 +35,10 @@ public class VisualMain extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VisualMain.class);
 
-    private static final int GRID_HEIGHT = 9 * 6;
-    private static final int GRID_WIDTH = 21 * 6;
+    private static final int GRID_HEIGHT = 9 * 3;
+    private static final int GRID_WIDTH = 21 * 3;
 
-    private static final int NODE_DIMENSION = 12;
+    private static final int NODE_DIMENSION = 15;
     private static final int SCENE_HEIGHT = GRID_HEIGHT * NODE_DIMENSION;
     private static final int SCENE_WIDTH = GRID_WIDTH * NODE_DIMENSION;
 
@@ -58,6 +58,7 @@ public class VisualMain extends Application {
             lines.add(new LineTo(r.getX(), r.getY()));
 
             Path path = new Path();
+            path.setStroke(Color.WHITE);
             path.getElements().add(new MoveTo(r.getX() * NODE_DIMENSION, r.getY() * NODE_DIMENSION));
 
             while (prev != null && (prev = prev.getParent()) != null) {
@@ -123,12 +124,11 @@ public class VisualMain extends Application {
                     return;
                 }
 
-
                 if (searchAlgorithm instanceof AStar) {
                     // Force all visited nodes to be a distinct color
                     searchAlgorithm.getVisitedNodes()
-                            .stream().
-                            forEach(n -> {
+                            .stream()
+                            .forEach(n -> {
                                 Rectangle r = (Rectangle) ((GridVertex) n).getDataElement();
                                 r.setFill(Color.DARKCYAN);
                             });
