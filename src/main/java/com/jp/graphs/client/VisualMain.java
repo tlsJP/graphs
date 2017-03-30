@@ -20,8 +20,6 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -54,15 +52,13 @@ public class VisualMain extends Application {
 
             GridVertex r = (GridVertex) result;
             Vertex prev = result.getParent();
-            List<LineTo> lines = new ArrayList<>();
-            lines.add(new LineTo(r.getX(), r.getY()));
 
             Path path = new Path();
             path.setStroke(Color.WHITE);
             path.getElements().add(new MoveTo(r.getX() * NODE_DIMENSION, r.getY() * NODE_DIMENSION));
 
             while (prev != null && (prev = prev.getParent()) != null) {
-                path.getElements().add(new LineTo(((GridVertex) prev).getX() * NODE_DIMENSION, ((GridVertex) prev).getY() * NODE_DIMENSION));
+                path.getElements().add(new LineTo(((GridVertex) prev).getX() * NODE_DIMENSION + (NODE_DIMENSION / 2), ((GridVertex) prev).getY() * NODE_DIMENSION + (NODE_DIMENSION / 2)));
             }
             root.getChildren().add(path);
         }
