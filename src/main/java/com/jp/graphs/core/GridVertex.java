@@ -37,12 +37,12 @@ public class GridVertex extends SimpleVertex implements Comparable, Heuristic {
     public double calculateHeuristic(Vertex v) {
         GridVertex gv = (GridVertex) v;
 
-        hScore = Math.abs(gv.getX() - x) + Math.abs(gv.getY() - y) ;
+//        hScore = Math.abs(gv.getX() - x) + Math.abs(gv.getY() - y) ;
 
         // Pythagorean theorem
-//        int yDistance = Math.abs(y - gv.y);
-//        int xDistance = Math.abs(x - gv.x);
-//        hScore = Math.sqrt(yDistance * yDistance + xDistance * xDistance);
+        int yDistance = Math.abs(y - gv.y);
+        int xDistance = Math.abs(x - gv.x);
+        hScore = Math.sqrt(yDistance * yDistance + xDistance * xDistance);
 
 
 
